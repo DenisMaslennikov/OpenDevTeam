@@ -1,0 +1,25 @@
+[project]
+name = "opendevteam-team-lead"
+version = "0.1.0"
+description = "Оркестратор (тимлид) OpenDevTeam"
+readme = "README.md"
+requires-python = ">=3.14"
+dependencies = [
+    "opendevteam-agents-core",
+    "langgraph",
+    "pydantic",
+    "pydantic-settings",
+    "redis",
+    "httpx",
+    "aio-pika",
+]
+
+[project.scripts]
+opendevteam-team-lead = "team_lead.main:run"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/team_lead"]

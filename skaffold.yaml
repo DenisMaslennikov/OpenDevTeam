@@ -1,0 +1,100 @@
+apiVersion: skaffold/v4beta14
+kind: Config
+metadata:
+  name: opendevteam
+build:
+  tagPolicy:
+    sha256: {}
+  artifacts:
+    - image: opendevteam/backend
+      custom:
+        buildCommand: docker build -f docker/backend/Dockerfile -t $IMAGE . && k3d image import $IMAGE -c dev-cluster
+        dependencies:
+          paths:
+            - docker/backend/Dockerfile
+            - packages/backend
+            - pyproject.toml
+            - uv.lock
+    - image: opendevteam/team_lead
+      custom:
+        buildCommand: docker build -f docker/team_lead/Dockerfile -t $IMAGE . && k3d image import $IMAGE -c dev-cluster
+        dependencies:
+          paths:
+            - docker/team_lead/Dockerfile
+            - packages/agents/team_lead
+            - packages/agents/core
+            - pyproject.toml
+            - uv.lock
+    - image: opendevteam/worker
+      custom:
+        buildCommand: docker build -f docker/worker/Dockerfile -t $IMAGE . && k3d image import $IMAGE -c dev-cluster
+        dependencies:
+          paths:
+            - docker/worker/Dockerfile
+            - packages/agents/worker
+            - packages/agents/core
+            - pyproject.toml
+            - uv.lock
+    - image: opendevteam/reviewer
+      custom:
+        buildCommand: docker build -f docker/reviewer/Dockerfile -t $IMAGE . && k3d image import $IMAGE -c dev-cluster
+        dependencies:
+          paths:
+            - docker/reviewer/Dockerfile
+            - packages/agents/reviewer
+            - packages/agents/core
+            - pyproject.toml
+            - uv.lock
+    - image: opendevteam/litellm
+      custom:
+        buildCommand: docker build -f docker/litellm/Dockerfile -t $IMAGE . && k3d image import $IMAGE -c dev-cluster
+        dependencies:
+          paths:
+            - docker/litellm
+    - image: opendevteam/cache
+      custom:
+        buildCommand: docker build -f docker/cache/Dockerfile -t $IMAGE . && k3d image import $IMAGE -c dev-cluster
+        dependencies:
+          paths:
+            - docker/cache
+    - image: opendevteam/frontend
+      custom:
+        buildCommand: docker build -f docker/frontend/Dockerfile -t $IMAGE . && k3d image import $IMAGE -c dev-cluster
+        dependencies:
+          paths:
+            - docker/frontend/Dockerfile
+            - packages/frontend
+manifests:
+  rawYaml:
+    - deploy/k8s/00-namespace.yaml
+    - deploy/k8s/01-secrets.yaml
+    - deploy/k8s/02-agents-config.yaml
+    - deploy/k8s/10-postgres.yaml
+    - deploy/k8s/11-redis.yaml
+    - deploy/k8s/12-cache.yaml
+    - deploy/k8s/13-rabbitmq.yaml
+    - deploy/k8s/20-litellm.yaml
+    - deploy/k8s/30-backend.yaml
+    - deploy/k8s/40-team-lead.yaml
+    - deploy/k8s/41-worker-reviewer.yaml
+    - deploy/k8s/50-frontend.yaml
+    - deploy/k8s/60-ingress.yaml
+deploy:
+  kubectl:
+    defaultNamespace: opendevteam
+portForward:
+  - resourceType: deployment
+    resourceName: frontend
+    namespace: opendevteam
+    port: 5173
+    localPort: 5173
+  - resourceType: deployment
+    resourceName: backend
+    namespace: opendevteam
+    port: 8000
+    localPort: 8000
+  - resourceType: deployment
+    resourceName: rabbitmq
+    namespace: opendevteam
+    port: 15672
+    localPort: 15672

@@ -1,0 +1,109 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: worker
+  namespace: opendevteam
+spec:
+  replicas: 5
+  selector:
+    matchLabels:
+      app: worker
+  template:
+    metadata:
+      labels:
+        app: worker
+    spec:
+      containers:
+        - name: dind
+          image: docker:dind
+          imagePullPolicy: IfNotPresent
+          command: ["dockerd"]
+          args:
+            - --host=tcp://127.0.0.1:2375
+            - --storage-driver=overlay2
+            - --registry-mirror=http://cache:5000
+            - --tls=false
+          securityContext:
+            privileged: true
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "250m"
+            limits:
+              memory: "1Gi"
+        - name: worker
+          image: opendevteam/worker:latest
+          imagePullPolicy: IfNotPresent
+          envFrom:
+            - configMapRef:
+                name: agents-common-config
+            - secretRef:
+                name: rabbitmq-secrets
+            - secretRef:
+                name: git-secrets
+          env:
+            - name: DOCKER_HOST
+              value: "tcp://127.0.0.1:2375"
+            - name: CODER_ENGINE
+              value: "langgraph"
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "250m"
+            limits:
+              memory: "1Gi"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: reviewer
+  namespace: opendevteam
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: reviewer
+  template:
+    metadata:
+      labels:
+        app: reviewer
+    spec:
+      containers:
+        - name: dind
+          image: docker:dind
+          imagePullPolicy: IfNotPresent
+          command: ["dockerd"]
+          args:
+            - --host=tcp://127.0.0.1:2375
+            - --storage-driver=overlay2
+            - --registry-mirror=http://cache:5000
+            - --tls=false
+          securityContext:
+            privileged: true
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
+            limits:
+              memory: "512Mi"
+        - name: reviewer
+          image: opendevteam/reviewer:latest
+          imagePullPolicy: IfNotPresent
+          envFrom:
+            - configMapRef:
+                name: agents-common-config
+            - secretRef:
+                name: rabbitmq-secrets
+            - secretRef:
+                name: git-secrets
+          env:
+            - name: SESSION_TIMEOUT
+              value: "900"
+            - name: DOCKER_HOST
+              value: "tcp://127.0.0.1:2375"
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
+            limits:
+              memory: "1Gi"
