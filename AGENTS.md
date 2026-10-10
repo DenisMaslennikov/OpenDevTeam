@@ -65,7 +65,7 @@ skaffold run         # разовый деплой без слежения
 
 ## Файлы правил
 
-Подробные правила разработки разделены по смыслу в `.agents/rules/`. Загружаются через `opencode.json` → `instructions`.
+Подробные правила разработки разделены по смыслу в `.agents/rules/`. Загружаются через `.kilo/kilo.jsonc` → `instructions` (глоб-паттерн `.agents/rules/*.md` — все файлы правил подхватываются автоматически).
 
 | Файл | Содержание |
 |---|---|
@@ -75,6 +75,19 @@ skaffold run         # разовый деплой без слежения
 | `.agents/rules/dependencies.md` | Управление зависимостями: uv, версии, добавление пакетов |
 | `.agents/rules/architecture.md` | Архитектурные принципы: backend vs team_lead, RabbitMQ, LiteLLM, DinD, watchdog |
 | `.agents/rules/documentation.md` | Правила документации: обновление AGENTS.md/README.md при изменениях |
+| `.agents/rules/adr.md` | Ведение ADR: когда создавать, команды `adrkit`, процесс propose → review → accept |
+
+## ADR (архитектурные решения)
+
+Архитектурные решения фиксируются в `docs/adr/` с помощью `@adrkit/cli` (ADR-0001). Кратко:
+
+- Значимое архитектурное решение → `adrkit new "Заголовок" --dir docs/adr`, заполнить по шаблону, `status: proposed`.
+- Ревью: `adrkit queue` → `approve` / `object` / `resolve` → `adrkit accept <id> --by @user`.
+- Изменение принятого решения — новый ADR с supersedes, старый не редактируется.
+- Перед коммитом: `adrkit lint` должен проходить без ошибок.
+- Ключевые решения: ADR-0002 — на первом этапе воркеры в режиме `coder` используют aider (движок задаётся `CODER_ENGINE`).
+
+Детали — в `.agents/rules/adr.md`.
 
 ## Runtime-правила агентов
 
