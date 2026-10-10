@@ -184,7 +184,7 @@ make reset
 # Порт-форварды: frontend http://localhost:5173, backend http://localhost:8000, RabbitMQ UI http://localhost:15672
 ```
 
-Агенты (team-lead, worker, reviewer) — заглушки: падают с сообщением `[<agent>] not yet implemented — exiting` и рестартуются (CrashLoopBackOff). Это ожидаемо, пока нет кода. Воркеры — 5 реплик, у каждого пода два контейнера: `dind` (Docker-in-Docker, storage driver `overlay2`, bridge-нетворкинг + NAT, слушает только `127.0.0.1:2375` внутри пода) и `worker`.
+Агенты (team-lead, worker, reviewer) — заглушки: печатают `[<agent>] agent not yet implemented — idling` и остаются живыми в idle-цикле (иначе skaffold dev воспринимает exit != 0 как провал деплоя и откатывает весь dev-контур). Это ожидаемо, пока нет кода. Воркеры — 5 реплик, у каждого пода два контейнера: `dind` (Docker-in-Docker, storage driver `overlay2`, bridge-нетворкинг + NAT, слушает только `127.0.0.1:2375` внутри пода) и `worker`.
 
 ### Безопасность dev-контура (компромисс: privileged DinD)
 

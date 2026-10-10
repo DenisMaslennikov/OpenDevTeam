@@ -6,12 +6,16 @@ for workers and reviewers, collects results. Does NOT spawn k8s pods directly
 """
 
 import sys
+import time
+
+_IDLE_INTERVAL = 3600
 
 
 def run() -> None:
     """Run the team lead agent: plan tasks, push to queue, collect results."""
-    print("[team-lead] agent not yet implemented — exiting", file=sys.stderr)
-    raise SystemExit(1)
+    print("[team-lead] agent not yet implemented — idling", file=sys.stderr)
+    while True:
+        time.sleep(_IDLE_INTERVAL)
 
 
 if __name__ == "__main__":
