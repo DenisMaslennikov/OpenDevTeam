@@ -9,7 +9,6 @@ dependencies = [
     "langgraph",
     "pydantic",
     "pydantic-settings",
-    "redis",
     "httpx",
     "aio-pika",
 ]

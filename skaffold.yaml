@@ -70,7 +70,6 @@ manifests:
     - deploy/k8s/01-secrets.yaml
     - deploy/k8s/02-agents-config.yaml
     - deploy/k8s/10-postgres.yaml
-    - deploy/k8s/11-redis.yaml
     - deploy/k8s/12-cache.yaml
     - deploy/k8s/13-rabbitmq.yaml
     - deploy/k8s/20-litellm.yaml

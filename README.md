@@ -26,12 +26,11 @@
 │  │ Antd 6   │    │   управление     │    │    сессии, ключи)│  │
 │  └──────────┘    │   проектом       │    └──────────────────┘  │
 │                  └────────┬─────────┘                          │
-│                           │    ┌──────────────────┐            │
-│                  ┌────────▼──┐ │   Redis          │            │
-│                  │ Team Lead  │ │   (кеш, ARQ)     │            │
-│                  │ (оркестр.) │ └──────────────────┘            │
-│                  │ LangGraph  │                                  │
-│                  └──────┬─────┘                                  │
+│                  ┌────────▼──┐                                 │
+│                  │ Team Lead  │                                 │
+│                  │ (оркестр.) │                                 │
+│                  │ LangGraph  │                                 │
+│                  └──────┬─────┘                                 │
 │                         │ пушит задачи                           │
 │                  ┌──────▼─────┐                                  │
 │                  │  RabbitMQ  │ ◄─── берут задачи                │
@@ -88,7 +87,6 @@
 | LLM-шлюз | LiteLLM proxy (гибрид: локальный GLM 5.2 + облачные + прокси) |
 | БД | PostgreSQL (задачи, сессии, ключи, токен-статистика) |
 | Очередь задач | RabbitMQ (aio-pika; воркеры берут задачи, тимлид пушит) |
-| Кеш/фоновые задачи | Redis + ARQ (нативно с FastAPI) |
 | Фронтенд | React 19, Vite, TypeScript, Ant Design 6, TanStack Query |
 | Инфра | Kubernetes (k3d для dev), Skaffold, Docker BuildKit |
 | Кодер-движок | TBD — абстракция в worker, тестим aider vs opencode |
@@ -136,8 +134,8 @@ OpenDevTeam/
 | Папка | Сервис | Переменные |
 |---|---|---|
 | `docker/agents/` | **Общие для всех агентов** | `LITELLM_BASE_URL`, `RABBITMQ_URL`, `LLM_TIMEOUT`, `SESSION_TIMEOUT`, `AGENT_LIFETIME`, `LOG_LEVEL` |
-| `docker/backend/` | FastAPI API | `DATABASE_URL`, `REDIS_URL`, `LITELLM_BASE_URL`, `LOG_LEVEL` |
-| `docker/team_lead/` | Оркестратор | `DATABASE_URL`, `REDIS_URL`, `LITELLM_BASE_URL`, `RABBITMQ_URL`, `LITELLM_API_KEY`, `LOG_LEVEL` |
+| `docker/backend/` | FastAPI API | `DATABASE_URL`, `LITELLM_BASE_URL`, `LOG_LEVEL` |
+| `docker/team_lead/` | Оркестратор | `DATABASE_URL`, `LITELLM_BASE_URL`, `RABBITMQ_URL`, `LITELLM_API_KEY`, `LOG_LEVEL` |
 | `docker/worker/` | Воркер (researcher/coder) | `WORKER_MODE`, `DOCKER_HOST`, `CODER_ENGINE` |
 | `docker/reviewer/` | Ревьюер | `SESSION_TIMEOUT=900` (переопределяет общую) |
 | `docker/litellm/` | LiteLLM proxy | `LITELLM_MASTER_KEY`, `LLM_API_KEY`, `DATABASE_URL` |

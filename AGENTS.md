@@ -26,7 +26,7 @@ OpenDevTeam — система для агентской ИИ-разработк
 | Папка | Переменные |
 |---|---|
 | `docker/agents/` | **Общие для всех агентов:** `LITELLM_BASE_URL`, `RABBITMQ_URL`, `LLM_TIMEOUT`, `SESSION_TIMEOUT`, `AGENT_LIFETIME`, `LOG_LEVEL` |
-| `docker/backend/` | `DATABASE_URL`, `REDIS_URL`, `LITELLM_BASE_URL`, `LOG_LEVEL` |
+| `docker/backend/` | `DATABASE_URL`, `LITELLM_BASE_URL`, `LOG_LEVEL` |
 | `docker/team_lead/` | + `LITELLM_API_KEY` |
 | `docker/worker/` | `WORKER_MODE`, `DOCKER_HOST`, `CODER_ENGINE` |
 | `docker/reviewer/` | + `SESSION_TIMEOUT=900` (переопределяет общую) |

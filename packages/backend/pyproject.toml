@@ -12,8 +12,6 @@ dependencies = [
     "sqlalchemy",
     "asyncpg",
     "alembic",
-    "redis",
-    "arq",
 ]
 
 [project.scripts]

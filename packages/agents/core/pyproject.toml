@@ -6,13 +6,11 @@ readme = "README.md"
 requires-python = ">=3.14"
 dependencies = [
     "langgraph",
-    "langgraph-checkpoint-redis",
     "litellm",
     "pydantic",
     "pydantic-settings",
     "httpx",
     "docker",
-    "redis",
     "aio-pika",
 ]
 
